@@ -2,4 +2,118 @@
 title: "Mulivariate Viz"
 ---
 
-Use this file for practice with the **mulivariate viz** in-class activity.  Refer to the class website for details.
+Use this file for practice with the **mulivariate viz** in-class activity.
+Refer to the class website for details.
+
+```{r}
+# Import and check out data
+education <- read.csv("https://mac-stat.github.io/data/sat.csv")
+head(education)
+View(education)
+```
+
+## Exercise 1
+
+```{r}
+# Part a
+# Construct a plot of how the average sat scores vary from state to state. (Just use 1 variable – sat not State!)
+library(ggplot2)
+ggplot(education, aes(x = sat)) + 
+  geom_density()
+```
+
+#### Part b
+
+##### Summarize your observations from the plot. Comment on the basics: range, typical outcomes, shape. (Any theories about what might explain this non-normal shape?)
+
+They range from 800 to 1000
+
+## Exercise 2
+
+#### Part a
+
+```{r}
+# Construct a plot of sat vs expend
+# Include a "best fit linear regression model" (HINT: method = "lm")
+ggplot(education, aes(x=sat, y=expend)) +
+  geom_smooth(method ="lm")
+```
+
+```{r}
+# Construct a plot of sat vs salary
+# Include a "best fit linear regression model" (HINT: method = "lm")
+ggplot(education, aes(x=sat, y=salary)) +
+  geom_smooth(method ="lm")
+```
+
+#### Part b
+
+```{r}
+
+```
+
+##### What are the relationship trends between SAT scores and spending? Is there anything that surprises you?
+
+The higher the scores the lower the salary that teachers received.
+
+## Exercise 3
+
+##### Construct one visualization of the relationship of sat with salary and expend. HINT: Start with just 2 variables and tweak that code to add the third variable. Try out a few things!
+
+```{r}
+ggplot(education, aes(x = sat, y = expend, color = salary)) +
+  geom_point()
+```
+
+## Exercise 4
+
+```{r}
+ggplot(education, aes(y = sat, x = salary, color = cut(expend, 2))) + 
+  geom_point() + 
+  geom_smooth(se = FALSE, method = "lm")
+```
+
+##### What happens if you change “2” to “3”? -
+
+-   increases the number of lines of continuous lines of the expend variable, it also changes the color
+
+## Exercise 5
+
+#### Part a
+
+Build a univariate viz of fracCat to better understand how many states fall into each category.
+
+```{r}
+ggplot(education, aes(x = fracCat)) + 
+  geom_bar()
+```
+
+#### Part b
+
+Build 2 bivariate visualizations that demonstrate the relationship between sat and fracCat.
+What story does your graphic tell and why does this make contextual sense?
+
+```{r}
+ggplot(education, aes(x = sat, fill = fracCat)) + 
+  geom_density(alpha = 0.5)
+```
+
+#### Part c
+
+Make a trivariate visualization that demonstrates the relationship of sat with expend AND fracCat.
+Highlight the differences in fracCat groups through color AND unique trend lines.
+What story does your graphic tell?
+Does it still seem that SAT scores decrease as spending increases?
+
+```{r}
+ggplot(education, aes(x = expend, y = sat, color = fracCat)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+#### Part d
+
+Putting all of this together, explain this example of Simpson’s Paradox.
+That is, why did it appear that SAT scores decrease as spending increases even though the opposite is true?
+
+-   There is selected participation in states where there is lowere expenditure therefore produces higher results.

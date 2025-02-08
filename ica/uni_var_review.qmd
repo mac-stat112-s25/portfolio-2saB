@@ -1,0 +1,54 @@
+---
+title: "uni_var_review"
+format: html
+---
+
+```{r}
+# Import data
+survey <- read.csv("https://ajohns24.github.io/data/112/about_us_2024.csv")
+
+# How many students have now filled out the survey? 28
+View(survey)
+
+# What type of variables do we have? Data frame: characters, integers & numericals
+str(survey)
+```
+```{r}
+# Attach a package needed to use the ggplot function
+library(tidyverse)
+
+ggplot(survey, aes(x = hangout)) +
+  geom_bar(color = "purple", fill = "thistle2")  +
+  labs(x = "Favourite hangout place", y = "Number of people") +
+  theme_minimal()
+
+
+# Make a ggplot
+```
+```{r}
+ggplot(survey, aes(x = fave_temp)) +
+  geom_bar(color = "grey", fill = "darkslategrey") +
+  labs(x = "Favourite temperature (C)", y = "Frequency")
+```
+```{r}
+ggplot(survey, aes(x = fave_temp)) +
+  geom_histogram(color = "pink", fill = "gold") +
+  labs(x = "Favourite temperature (C)", y = "Frequency")
+```
+```{r}
+# Range of  fave_temp
+survey %>%     
+  summarise(range(fave_temp, na.rm = TRUE))
+```
+```{r}
+# Bivariate variable practice
+weather_by_time <- data.frame(temp_3pm = c(24, 26, 20, 15, 15, 15), temp_9am = c(14, 18, 15, 13, 11, 11))
+
+ggplot(weather_by_time, aes(x = temp_3pm, y = temp_9am)) +
+  geom_density(color = "red") +
+  labs (x = "Temperature at 3pm (C)", y = "Temperature at 9am (C)") +
+  theme_minimal()
+
+# Yeah, this one here got a problem and I know it, was just experimenting
+```
+
