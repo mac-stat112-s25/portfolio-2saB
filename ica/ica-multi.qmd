@@ -7,9 +7,13 @@ Refer to the class website for details.
 
 ```{r}
 # Import and check out data
+
+library(ggplot2)
+library(tidyverse)
+
 education <- read.csv("https://mac-stat.github.io/data/sat.csv")
 head(education)
-View(education)
+#View(education)
 ```
 
 ## Exercise 1
@@ -17,7 +21,6 @@ View(education)
 ```{r}
 # Part a
 # Construct a plot of how the average sat scores vary from state to state. (Just use 1 variable – sat not State!)
-library(ggplot2)
 ggplot(education, aes(x = sat)) + 
   geom_density()
 ```

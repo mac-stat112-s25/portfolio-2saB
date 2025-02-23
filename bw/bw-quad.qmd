@@ -2,4 +2,48 @@
 title: "Quadvariate Viz"
 ---
 
-Use this file to generate a professional looking **quadvariate** visualization.  The visualization will not perfect the first time but you are expected to improve on it throughout the semester especially after covering advanced topics such as effective viz.
+Use this file to generate a professional looking **quadvariate** visualization.
+The visualization will not perfect the first time but you are expected to improve on it throughout the semester especially after covering advanced topics such as effective viz.
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+
+penguins <- drop_na(penguins)  
+
+penguins <- penguins |> 
+  mutate(mass_category = cut(body_mass_g, 
+                             breaks = c(2700, 3500, 4500, 5500, 6500),
+                             labels = c("Small", "Medium", "Large", "Extra Large")))
+
+species_colors <- c("#0072B2", "#E69F00", "#009E73") 
+# border_colors <- c("#D55E00", "#56B4E9", "#CC79A7", "#009E73")  
+
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point(aes(fill = species, size = body_mass_g), 
+             shape = 21, stroke = 1.5, alpha = 0.8) +  
+  scale_fill_manual(values = species_colors, name = "Species") +  
+#  scale_color_manual(values = border_colors, name = "Body Mass Category") +
+  scale_size_continuous(range = c(2, 6), name = "Body Mass (g)") + 
+  labs(
+    title = "A comparison of penguin species by bill length and depth",
+    x = "Bill Length (mm)",
+    y = "Bill Depth (mm)",
+    caption = "By: Thusa."
+  ) +
+  facet_wrap(~mass_category) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5, margin = margin(b = 10)),
+    plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 5)),
+    plot.caption = element_text(size = 10, hjust = 0, margin = margin(t = 10)),
+    legend.position = "right",
+    panel.grid.major = element_line(color = "grey80"),
+    panel.grid.minor = element_blank()
+  )
+
+#| fig-alt: "A scatter plot displaying the relationship between penguin bill length and depth in millimetres across various specious. Species are shown by fill color (Adelie, Chinstrap, Gentoo), and body mass in grams is represented by size of plot and facet across four categories: Small, Medium, Large, and Extra Large."
+
+
+```
+

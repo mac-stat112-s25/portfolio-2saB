@@ -3,3 +3,27 @@ title: "Bivariate Viz"
 ---
 
 Use this file to generate a professional looking **bivariate** visualization.  The visualization will not perfect the first time but you are expected to improve it throughout the semester especially after covering advanced topics such as effective viz.
+```{r}
+library(tidyverse)
+library(ggthemes)  
+
+elections <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
+
+ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
+  geom_point(color = "red3", shape = 16, alpha = 0.7) +  # Blue for colorblind-friendliness
+  labs(
+    title = "Comparison of Republican Vote Share in 2016 vs. 2020 by County",
+    x = "Republican Vote Percentage (2016)",
+    y = "Republican Vote Percentage (2020)",
+    caption = "Counties with a high Republican vote share in 2016 generally maintained a similar share in 2020."
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5, margin = margin(b = 10)),  
+    plot.caption = element_text(size = 10, hjust = 0.5, margin = margin(t = 10)),  
+    plot.margin = margin(20, 20, 20, 20)  
+  )
+
+#| fig-alt: "A scatter plot displaying the relationship between the percentage of Republican votes in 2016 and 2020 across U.S. counties. Each point represents a county, with its position showing the percentage of Republican votes in 2016 (x-axis) and 2020 (y-axis). The trend indicates how counties shifted in Republican support between the two elections."
+```
+

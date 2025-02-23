@@ -3,3 +3,39 @@ title: "Trivariate Viz"
 ---
 
 Use this file to generate a professional looking **trivariate** visualization.  The visualization will not perfect the first time but you are expected to improve on it throughout the semester especially after covering advanced topics such as effective viz.
+```{r}
+library(tidyverse)
+
+weather <- read.csv("https://mac-stat.github.io/data/weather_3_locations.csv") |> 
+  mutate(date = as.Date(date))  
+woll <- weather |>
+  filter(location == "Wollongong") |> 
+  mutate(date = as.Date(date))  
+
+#View(weather)
+
+ggplot(woll, aes(x = raintoday, fill = raintomorrow)) + 
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = c("#0072B2", "#E69F00"), name = "Will it Rain Tomorrow?") + 
+  labs(
+    title = "Rain Prediction in Wollongong",
+    subtitle = "Relationship between rain today and rain tomorrow.",
+    x = "Did it Rain Today?",
+    y = "Probability of Rain",
+    fill = "Will it Rain Tomorrow?",
+    caption = "By: Thusa"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5, margin = margin(b = 10)),  
+    plot.caption = element_text(size = 10, hjust = 0, margin = margin(t = 10)),  
+    legend.position = "right",
+    plot.margin = margin(20, 20, 20, 20)
+  )
+
+#| fig-alt: "A stacked bar chart showing the proportion of days in Wollongong where rain today is associated with rain tomorrow. The x-axis represents whether it rained today, and the bars are divided by color to show the proportion of rainy vs. non-rainy days the next day."
+
+#ggplot(woll, aes(x = raintoday, fill = raintomorrow)) + 
+  #geom_bar(position = "fill")
+```
+

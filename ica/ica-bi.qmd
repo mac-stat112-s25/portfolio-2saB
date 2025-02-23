@@ -7,7 +7,8 @@ title: "Bivariate Viz"
 ```{r}
 # Load data
 elections <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
-View(elections)
+library(tidyverse)
+#View(elections)
 # Check it out
 head(elections)
 
