@@ -1,0 +1,248 @@
+---
+title: "Reshaping"
+editor: visual
+---
+## Exercise 1
+```{r}
+sleep_wide <- read.csv("https://mac-stat.github.io/data/sleep_wide.csv")
+
+head(sleep_wide)
+```
+#### Part a
+What are the units of observation in sleep_wide?
+- 
+
+#### Part b
+Suppose I ask you to plot each subject’s reaction time (y-axis) vs the number of days of sleep restriction (x-axis). “Sketch” out in words what the first few rows of the data need to look like in order to do this. It might help to think about what you’d need to complete the plotting frame:
+
+- The first few rows need to have days on their own, reaction time and the subject is.
+
+#### Part c
+```{r}
+# How can you obtain the dataset you sketched in part b?
+library(tidyverse)
+library(tidyr)
+
+sleep_pivot_long <- sleep_wide |> 
+  pivot_longer(
+    cols = starts_with("day"),  
+    names_to = "day", 
+    values_to = "reaction_time"
+  ) |> 
+  mutate(day = as.numeric(gsub("day_", "", day))) 
+
+head(sleep_pivot_long)
+
+
+```
+
+## Exercise 2
+#### Part a
+```{r}
+# For cols, try 2 appproaches: using - and starts_with
+# ___ |> 
+#   pivot_longer(cols = ___, names_to = "___", values_to = "___")
+```
+
+#### Part b
+```{r}
+sleep_long <- sleep_wide |>
+  pivot_longer(cols = -Subject,
+               names_to = "day",
+               names_prefix = "day_",
+               values_to = "reaction_time")
+
+head(sleep_long)
+```
+#### Part c
+Using sleep_long, construct a line plot of reaction time vs day for each subject. This will look goofy no matter what you do. Why? HINT: look back at head(sleep_long). What class or type of variables are Subject and day? What do we want them to be?
+```{r}
+sleep_long |> 
+#  filter(subject == 308) |> 
+  ggplot(aes(x = day, y = reaction_time)) +  
+  geom_line(color = "blue", size = 2, alpha = 0.5) +
+  labs(
+    title = "Reaction Time per Day for Subject 308",
+    x = "Day",
+    y = "Reaction Time"
+  ) +
+  theme_minimal()
+```
+## Exercise 3
+```{r}
+sleep_long <- sleep_wide |>
+  pivot_longer(cols = -Subject,
+               names_to = "day",
+               names_prefix = "day_",
+               values_to = "reaction_time") |> 
+  mutate(Subject = as.factor(Subject), day = as.numeric(day))
+
+# Check it out
+# Same data, different class
+head(sleep_long)
+```
+#### Part a
+```{r}
+# Make a line plot of reaction time by day for each subject
+# Put these all on the same frame
+
+ggplot(sleep_long, aes(x = day, y = reaction_time, color = Subject)) +
+  geom_line(color = "blue")
+```
+
+```{r}
+# Make a line plot of reaction time by day for each subject
+# Put these all on separate frames (one per subject)
+
+ggplot(sleep_long, aes(x = day, y = reaction_time, group = Subject)) + 
+  geom_line(color = "blue") +
+  facet_wrap(~Subject) 
+```
+## Exercise 4
+
+#### Part a
+Make the data wide again, with each day becoming its own column.
+```{r}
+ sleep_long |>
+   pivot_wider(names_from = day, values_from = reaction_time) |> 
+   head()
+```
+#### Part b
+Using your intuition, adjust your code from part a to name the reaction time columns “day_0”, “day_1”, etc.
+```{r}
+sleep_long |>
+   pivot_wider(names_from = day, values_from = reaction_time, names_prefix = "day_") |> 
+   head()
+```
+## Exercise 5
+```{r}
+# Load data
+library(tidyr)
+data("billboard")
+
+# Check it out
+head(billboard)
+```
+
+#### Part a
+Construct and summarize a plot of how a song’s Billboard ranking its 2nd week on the chart (y-axis) is related to its ranking the 1st week on the charts (x-axis). Add a reference line geom_abline(intercept = 0, slope = 1). Songs above this line improved their rankings from the 1st to 2nd week.
+```{r}
+billboard_long <- billboard |>
+  pivot_longer(cols = starts_with("wk"), names_to = "week", values_to = "rank", values_drop_na = TRUE) |>
+  mutate(week = as.numeric(gsub("wk", "", week)))  
+
+billboard_weeks <- billboard_long |>
+  filter(week %in% c(1, 2)) |>
+  pivot_wider(names_from = week, values_from = rank, names_prefix = "week_")
+
+ggplot(billboard_weeks, aes(x = week_1, y = week_2)) +
+  geom_point(color = "blue", alpha = 0.5) +  
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  labs(
+    title = "Billboard Rankings: Week 1 vs Week 2",
+    x = "Ranking in 1st Week",
+    y = "Ranking in 2nd Week"
+  ) +
+  theme_minimal()
+
+```
+#### Part b
+Use your wrangling tools to identify which songs are those above the line in Part a, i.e. with rankgings that went up from week 1 to week 2.
+```{r}
+songs_improved <- billboard_weeks |>
+  filter(week_2 < week_1) |>
+  select(artist, track, week_1, week_2) |>
+  arrange(week_2)  
+
+print(songs_improved)
+```
+#### Part c
+Define a new dataset, nov_1999, which:
+  only includes data on songs that entered the Billboard charts on November 6, 1999
+  keeps all variables except track and date.entered. HINT: How can you avoid writing out   all the variable names you want to keep?
+```{r}
+nov_1999 <- billboard |>
+  filter(date.entered == as.Date("1999-11-06")) |>
+  select(-track, -date.entered)
+print(nov_1999)
+```
+#### Part d
+Create and discuss a visualization of the rankings (y-axis) over time (x-axis) for the 2 songs in nov_1999. There are hints below (if you scroll), but you’re encouraged to play around and use as few hints as possible.
+
+Hints:
+  Should you first pivot wider or longer?
+  Once you pivot, the week number is turned into a character variable. How can you change   it to a number?
+```{r}
+nov_1999_long <- nov_1999 |> 
+  pivot_longer(cols = starts_with("wk"), names_to = "week", values_to = "rank", values_drop_na = TRUE) |> 
+  mutate(week = as.numeric(gsub("wk", "", week)))  
+
+ggplot(nov_1999_long, aes(x = week, y = rank)) +
+  geom_line(size = 1) +  
+  geom_point(size = 2) +
+  scale_y_reverse() +  
+  labs(
+    title = "Billboard Rankings Over Time for Songs Entered on Nov 6, 1999",
+    x = "Week Number",
+    y = "Billboard Rank"
+  ) +
+  theme_minimal()
+
+```
+## Exercise 6
+```{r}
+library(fivethirtyeight)
+data("daily_show_guests")
+daily <- daily_show_guests
+head(daily)
+```
+#### Part a
+Identify the 15 guests that appeared the most. (This isn’t a very diverse guest list!)
+```{r}
+top_15_guests <- daily |> 
+  count(raw_guest_list, sort = TRUE) |>  
+  top_n(15, n)  
+
+print(top_15_guests)
+```
+#### Part b
+CHALLENGE: Create the following data set containing 19 columns:
+
+The first column should have the 15 guests with the highest number of total appearances on the show, listed in descending order of number of appearances.
+17 columns should show the number of appearances of the corresponding guest in each year from 1999 to 2015 (one per column).
+Another column should show the total number of appearances for the corresponding guest over the entire duration of the show.
+```{r}
+daily |> 
+  count(year, raw_guest_list) |> 
+  group_by(raw_guest_list) |> 
+  mutate(total = sum(n)) |>
+  pivot_wider(names_from = year, 
+              values_from = n,
+              values_fill = 0) |> 
+  arrange(desc(total)) |> 
+  head(15)
+```
+
+#### Part c
+Let’s recreate the first figure from the article. This groups all guests into 3 broader occupational categories. However, our current data has 18 categories:
+```{r}
+plot_data <- daily |> 
+  mutate(broad_group = case_when(
+    group %in% c("Acting", "Athletics", "Comedy", "Musician") ~ "Acting, Comedy & Music",
+    group %in% c("Media", "media", "Science", "Academic", "Consultant", "Clergy") ~ "Media",
+    group %in% c("Politician", "Political Aide", "Government", "Military", "Business", "Advocacy") ~ "Government and Politics",
+    .default = NA
+  )) |> 
+  filter(!is.na(broad_group))
+```
+
+
+```{r}
+plot_data |>
+  group_by(year, broad_group) |>
+  summarise(n = n()) |>
+  mutate(freq = n / sum(n)) |> 
+  ggplot(aes(y = freq, x = year, color = broad_group)) + 
+    geom_line()
+```
+
