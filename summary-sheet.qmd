@@ -1,0 +1,15 @@
+---
+title: "Summary sheet"
+editor: visual
+---
+
+```{=html}
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQk-Iq9KAtDNjuH0KOCjbPMmGWmCylH5Ve4sXfKGWPpTZn-A2BhscvF_bbuRO3bBRXr6lskvooHFxfp/embed?start=false&loop=false&delayms=3000" 
+        frameborder="0" 
+        width="960" 
+        height="569" 
+        allowfullscreen="true" 
+        mozallowfullscreen="true" 
+        webkitallowfullscreen="true">
+</iframe>
+```

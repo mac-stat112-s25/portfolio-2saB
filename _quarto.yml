@@ -4,7 +4,7 @@ project:
 
 book:
   title: "COMP/STAT112 Notebook"
-  author: "Your Name Here"
+  author: "Providence"
   date: today
   reader-mode: true
   page-navigation: true
@@ -13,7 +13,7 @@ book:
   
   
   sidebar:
-    title: "Your Name Here"
+    title: "Providence"
     collapse-level: 2
     style: "docked"
     pinned: true
@@ -30,6 +30,12 @@ book:
       - bw/bw-tri.qmd
       - bw/bw-quad.qmd
       - bw/bw-spatial.qmd
+      - bw/solo-project.qmd
+      
+    - part: "Exams"
+      chapters: 
+      - exams/exam-1.qmd
+      - exams/exam-2.qmd
 
     - part: "In-class Activities"
       chapters: 
@@ -37,6 +43,18 @@ book:
       - ica/ica-bi.qmd
       - ica/ica-multi.qmd
       - ica/ica-spatial.qmd
+      - ica/ica-effective.qmd
+      - ica/ica-wrangling.qmd
+      - ica/ica-dates.qmd
+      - ica/ica-reshaping.qmd
+      - ica/ica-joining.qmd
+      - ica/ica-factors.qmd
+      - ica/ica-strings.qmd
+      - ica/ica-data import.qmd
+      
+    - part: "Summary Sheet"
+      chapters: 
+      - summary-sheet.qmd
 
 format:
   html:
@@ -51,10 +69,15 @@ format:
     code-link: true
     code-line-numbers: true
     code-tools: true
+    code-fold: true
 
 execute:
   cache: false
-  freeze: auto
+  freeze: false
+  echo: true
+  warning: false
+  error: false
+
 
 editor: 
   markdown:

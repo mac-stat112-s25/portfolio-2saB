@@ -1,0 +1,88 @@
+---
+title: "Solo Project"
+editor: visual
+---
+
+
+```{r}
+#packages
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(plotly)
+library(sf)
+library(viridis)
+```
+
+```{r}
+# data
+castles <- read_csv("../data/Travel tourism and tourist in Iran.csv")
+
+
+# shape file
+map_data <- st_read("../data/iran.shp")
+
+
+```
+```{r}
+#take a look at the data
+head(castles)
+#View(map_data)
+```
+
+
+
+
+```{r}
+# filter for castles
+
+
+
+castles_filtered <- castles |>
+  select(province, Castle) 
+
+
+# Standardize province names and lowercase & remove extra spaces
+castles_filtered <- castles_filtered %>%
+  mutate(province = tolower(trimws(province)))
+
+head(castles_filtered)
+```
+
+```{r}
+# rename shape1 to province
+map_data <- map_data %>%
+  rename(province = name) %>%
+  mutate(province = tolower(trimws(province)))
+```
+
+
+```{r}
+# join the csv and the shape file
+map_data_joined <- map_data %>%
+  full_join(castles_filtered, by = "province")
+
+#View(map_data_joined)
+```
+
+
+```{r}
+# plot
+#| fig-alt: "A choropleth map of Iran showing the number of castles in each province. Provinces are shaded using a plasma color gradient, where lighter colors represent provinces with fewer castles and darker colors indicate provinces with more castles. Provinces with no data are filled in grey. The map is titled Number of Castles in Provinces of Iran, based on tourism data."
+
+#| fig-cap: Source: Tourism Data
+
+library(ggplot2)
+
+ggplot() +
+  geom_sf(data = map_data_joined, aes(fill = Castle), color = "white", size = 0.15) +
+  scale_fill_viridis_c(option = "plasma", na.value = "red") +  # red was a bit aggressive; grey is calmer
+  labs(
+    title = "Number of Castles in Provinces of Iran",
+    fill = "Number of Castles",
+    caption = "By 2sa"
+  ) +
+  theme_void()
+
+```
+
